@@ -379,30 +379,92 @@
         </div>
     </div>
 
-<script>
-    function increase(btn) {
-        const quantitySpan = btn.parentElement.querySelector('.quantity');
-        let count = parseInt(quantitySpan.textContent);
-        quantitySpan.textContent = count + 1;
-    }
+    <script>
+        function increase(btn) {
+                const quantitySpan = btn.parentElement.querySelector('.quantity');
+                let count = parseInt(quantitySpan.textContent);
+                quantitySpan.textContent = count + 1;
+            }
 
-    function decrease(btn) {
-        const quantitySpan = btn.parentElement.querySelector('.quantity');
-        let count = parseInt(quantitySpan.textContent);
-        if (count > 1) quantitySpan.textContent = count - 1;
-    }
+            function decrease(btn) {
+                const quantitySpan = btn.parentElement.querySelector('.quantity');
+                let count = parseInt(quantitySpan.textContent);
+                if (count > 1) quantitySpan.textContent = count - 1;
+            }
 
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', () => {
-            const card = button.closest('.card');
-            const title = card.querySelector('.card-title').textContent;
-            const price = card.querySelector('.card-text').textContent;
-            const quantity = card.querySelector('.quantity').textContent;
-            alert(`Added ${quantity} x ${title} (${price}) to cart`);
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = [];
+
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', () => {
+                    const card = button.closest('.card');
+                    const title = card.querySelector('.card-title').textContent;
+                    const price = card.querySelector('.card-text').textContent;
+                    const quantity = parseInt(card.querySelector('.quantity').textContent);
+
+                    const existing = cart.find(item => item.title === title);
+                    if (existing) {
+                        existing.quantity += quantity;
+                    } else {
+                        cart.push({ title, price, quantity });
+                    }
+
+                    alert(`Added ${quantity} x ${title} (${price}) to cart`);
+                });
+            });
+
+            document.querySelector('.cart-button').addEventListener('click', () => {
+                const cartContents = document.getElementById('cartContents');
+                cartContents.innerHTML = cart.length === 0
+                    ? '<p>Your cart is empty.</p>'
+                    : '<ul class="list-group">' + cart.map(item =>
+                        `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${item.quantity} x ${item.title}
+                            <span>${item.price}</span>
+                        </li>`).join('') + '</ul>';
+            });
+
+            document.querySelector('.confirm-purchase').addEventListener('click', () => {
+                if (cart.length === 0) {
+                    alert('Your cart is empty. Please add items before confirming.');
+                    return;
+                }
+
+                alert('Purchase confirmed! Thank you for shopping with us.');
+
+                // Clear the cart
+                cart.length = 0;
+
+                // Update cart display
+                const cartContents = document.getElementById('cartContents');
+                cartContents.innerHTML = '<p>Your cart is empty.</p>';
+            });
         });
-    });
-</script>
+    </script>
 
+    <!-- Cart Button -->
+    <button class="btn btn-success cart-button" data-bs-toggle="modal" data-bs-target="#cartModal">
+        🛒 Cart
+    </button>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Confirm Purchase</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cartContents">
+                    <!-- Cart items will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary confirm-purchase">Confirm Purchase</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Footer -->
     <div class="footer">
         <div class="container text-justify mx-sm-5">
@@ -430,4 +492,5 @@
     </div>
     
 </body>
+
 </html>
