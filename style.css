@@ -52,4 +52,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+}
+.cart-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 18px;
 }
